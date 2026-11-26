@@ -1,0 +1,106 @@
+{
+  "model_selection": "attention_wnet_deepsup",
+  "version": "baseline_wDeepSup_3out",
+  "hardware_profile": "kaggle_t4x2",
+  "channels": "green_only",
+  "use_lab_colorspace": true,
+  "hardware_profiles": {
+    "kaggle_t4x2": {
+      "description": "Kaggle dual T4 GPUs - reduced batch for 3 deep sup outputs",
+      "image_processing_strategy": "dynamic_resize",
+      "image_size": 608,
+      "batch_size": 4,
+      "gradient_accumulation_steps": 4,
+      "use_data_parallel": true,
+      "num_workers": 4,
+      "use_mixed_precision": false,
+      "pin_memory": true
+    }
+  },
+  "augmentation": {
+    "enabled": true,
+    "horizontal_flip": 0.5,
+    "vertical_flip": 0.5,
+    "rotation_degrees": 15,
+    "scale_range": [
+      0.9,
+      1.1
+    ],
+    "brightness": 0.15,
+    "contrast": 0.15,
+    "saturation": 0.1,
+    "gaussian_blur_prob": 0.2,
+    "gaussian_blur_kernel": [
+      3,
+      7
+    ],
+    "elastic_transform_prob": 0.2,
+    "elastic_alpha": 50,
+    "elastic_sigma": 5,
+    "grid_distortion_prob": 0.15,
+    "coarse_dropout_prob": 0.0,
+    "coarse_dropout_max_holes": 4,
+    "coarse_dropout_max_size": 16
+  },
+  "hyperparameters": {
+    "epochs": 200,
+    "learning_rate": 0.001,
+    "n_labels": 3,
+    "early_stopping_patience": 15,
+    "gradient_accumulation_steps": 4,
+    "deep_supervision": {
+      "enabled": true,
+      "num_outputs": 3,
+      "weights": [
+        1.0,
+        0.5,
+        0.25,
+        0.125
+      ]
+    },
+    "stage1_loss_kwargs": {
+      "alpha": 0.5,
+      "gamma": 2.0,
+      "dice_weight": 0.8,
+      "boundary_weight": 0.1
+    },
+    "stage2_loss_kwargs": {
+      "alpha": 1.0,
+      "gamma": 3.0,
+      "dice_weight": 0.5,
+      "tv_weight": 0.01,
+      "boundary_weight": 0.15
+    },
+    "stage1_weight": 0.5,
+    "stage2_weight": 1.0
+  },
+  "model_configs": {
+    "attention_wnet_deepsup": {
+      "filter_num": [
+        32,
+        64,
+        128,
+        256,
+        512
+      ],
+      "dropout": 0.1
+    }
+  },
+  "dataset_splits": {
+    "train": {
+      "images": "/path/to/data/train/images",
+      "labels": "/path/to/data/train/labels"
+    },
+    "val": {
+      "images": "/path/to/data/val/images",
+      "labels": "/path/to/data/val/labels"
+    },
+    "test": {
+      "images": "/path/to/data/test/images",
+      "labels": "/path/to/data/test/labels"
+    }
+  },
+  "output_dir": "outputs/research",
+  "seed": 261,
+  "cpu_threads": 4
+}

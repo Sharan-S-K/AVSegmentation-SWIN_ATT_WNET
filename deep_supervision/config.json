@@ -1,0 +1,106 @@
+{
+  "model_selection": "attention_wnet_deepsup",
+  "version": "baseline_wDeepSup_3out",
+  "hardware_profile": "cpu_demo",
+  "channels": "green_only",
+  "use_lab_colorspace": true,
+  "hardware_profiles": {
+    "cpu_demo": {
+      "description": "Small synthetic CPU demonstration",
+      "image_processing_strategy": "resize",
+      "image_size": 64,
+      "batch_size": 2,
+      "gradient_accumulation_steps": 2,
+      "use_data_parallel": false,
+      "num_workers": 0,
+      "use_mixed_precision": false,
+      "pin_memory": false
+    }
+  },
+  "augmentation": {
+    "enabled": true,
+    "horizontal_flip": 0.5,
+    "vertical_flip": 0.5,
+    "rotation_degrees": 5,
+    "scale_range": [
+      0.9,
+      1.1
+    ],
+    "brightness": 0.15,
+    "contrast": 0.15,
+    "saturation": 0.1,
+    "gaussian_blur_prob": 0.2,
+    "gaussian_blur_kernel": [
+      3,
+      7
+    ],
+    "elastic_transform_prob": 0.2,
+    "elastic_alpha": 4,
+    "elastic_sigma": 2,
+    "grid_distortion_prob": 0.15,
+    "coarse_dropout_prob": 0.0,
+    "coarse_dropout_max_holes": 4,
+    "coarse_dropout_max_size": 16
+  },
+  "hyperparameters": {
+    "epochs": 2,
+    "learning_rate": 0.001,
+    "n_labels": 3,
+    "early_stopping_patience": 15,
+    "gradient_accumulation_steps": 2,
+    "deep_supervision": {
+      "enabled": true,
+      "num_outputs": 3,
+      "weights": [
+        1.0,
+        0.5,
+        0.25,
+        0.125
+      ]
+    },
+    "stage1_loss_kwargs": {
+      "alpha": 0.5,
+      "gamma": 2.0,
+      "dice_weight": 0.8,
+      "boundary_weight": 0.1
+    },
+    "stage2_loss_kwargs": {
+      "alpha": 1.0,
+      "gamma": 3.0,
+      "dice_weight": 0.5,
+      "tv_weight": 0.01,
+      "boundary_weight": 0.15
+    },
+    "stage1_weight": 0.5,
+    "stage2_weight": 1.0
+  },
+  "model_configs": {
+    "attention_wnet_deepsup": {
+      "filter_num": [
+        8,
+        16,
+        32,
+        64,
+        128
+      ],
+      "dropout": 0.1
+    }
+  },
+  "dataset_splits": {
+    "train": {
+      "images": "sample_data/train/images",
+      "labels": "sample_data/train/labels"
+    },
+    "val": {
+      "images": "sample_data/val/images",
+      "labels": "sample_data/val/labels"
+    },
+    "test": {
+      "images": "sample_data/test/images",
+      "labels": "sample_data/test/labels"
+    }
+  },
+  "output_dir": "outputs/demo",
+  "seed": 261,
+  "cpu_threads": 4
+}

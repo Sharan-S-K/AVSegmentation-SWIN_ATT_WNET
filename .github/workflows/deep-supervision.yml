@@ -1,0 +1,21 @@
+name: Deep-supervision example
+on:
+  push:
+    paths: ['deep_supervision/**', '.github/workflows/deep-supervision.yml']
+  pull_request:
+    paths: ['deep_supervision/**', '.github/workflows/deep-supervision.yml']
+permissions:
+  contents: read
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - run: python -m pip install torch==2.0.0 torchvision==0.15.1 --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install -r deep_supervision/requirements.txt
+      - run: python deep_supervision/check_model.py --full-size
+      - run: python deep_supervision/train.py --device cpu
+      - run: python deep_supervision/evaluate.py --device cpu --save-predictions
