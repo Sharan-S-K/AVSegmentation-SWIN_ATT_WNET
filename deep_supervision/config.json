@@ -6,9 +6,9 @@
   "use_lab_colorspace": true,
   "hardware_profiles": {
     "cpu_demo": {
-      "description": "Small synthetic CPU demonstration",
-      "image_processing_strategy": "resize",
-      "image_size": 64,
+      "description": "Small CPU demonstration with DRIVE and HRF retinal images",
+      "image_processing_strategy": "patching",
+      "image_size": 256,
       "batch_size": 2,
       "gradient_accumulation_steps": 2,
       "use_data_parallel": false,

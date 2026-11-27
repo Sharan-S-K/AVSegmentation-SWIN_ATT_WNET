@@ -23,15 +23,52 @@ python evaluate.py --device cpu --save-predictions
 python check_model.py --full-size
 ```
 
-The included example has six training pairs, two validation pairs and two
-held-out test pairs. These are **synthetic 64×64 vessel drawings**, not patient
-images or a medical benchmark. They let a reviewer run data loading, augmentation,
-deep-supervised training, checkpoint saving/loading and evaluation without an
-external download. `generate_sample_data.py` regenerates the same examples.
+The included example contains **five real DRIVE image/mask pairs and five real
+HRF image/mask pairs**, reused from the existing project dataset. There are six
+training pairs (three from each dataset), two validation pairs (one each), and
+two held-out test pairs (one each). Validation examples are reserved from the
+source training folders; test examples come from the source test folders. No
+selected image is repeated across the demonstration splits.
 
-`config.json` uses small filter widths `[8, 16, 32, 64, 128]`, two CPU epochs,
-four input channels (CLAHE green plus LAB), and batch size two. It retains three
-auxiliary heads per stage and the same cascade structure as the larger model.
+Images retain their aspect ratios and are resized to a maximum dimension of
+512 pixels. Masks are resized to the same dimensions using nearest-neighbour
+interpolation. The original data files are unchanged. For a short CPU run,
+`config.json` uses 256×256 random training crops and centre evaluation crops,
+small filter widths `[8, 16, 32, 64, 128]`, two epochs, four input channels
+(CLAHE green plus LAB), and batch size two. The six auxiliary heads and cascade
+structure are unchanged. This ten-image subset demonstrates the complete
+pipeline; it is not an official dataset split or a reliable performance benchmark.
+
+| Dataset | Training source files | Validation source file | Test source file |
+| --- | --- | --- | --- |
+| DRIVE_AV | `train/images/DRIVE0.png`, `DRIVE1.png`, `DRIVE2.png` | `train/images/DRIVE3.png` | `test/images/DRIVE0.png` |
+| HRF_AV | `train/images/0.png`, `1.png`, `2.png` | `train/images/3.png` | `test/images/0.png` |
+
+The names above are the existing project's filenames, not verified original
+dataset identifiers. Each photograph is paired with the matching file in that
+source folder's `label` directory. The original DRIVE release provides vessel
+annotations; the A/V masks here are the additional annotations used in this
+project. The synthetic generator is optional and writes to `synthetic_data/`,
+so it does not overwrite the real samples.
+
+### Dataset credits
+
+- DRIVE images: Staal J, Abramoff MD, Niemeijer M, Viergever MA, van Ginneken B.
+  *Ridge-based vessel segmentation in color images of the retina.* IEEE TMI,
+  2004, 23(4):501–509. [Dataset](https://drive.grand-challenge.org/).
+- HRF images: Budai A, Bock R, Maier A, Hornegger J, Michelson G.
+  *Robust Vessel Segmentation in Fundus Images.* International Journal of
+  Biomedical Imaging, 2013.
+  [Dataset and CC BY 4.0 terms](https://www5.cs.fau.de/research/data/fundus-images/).
+- Additional A/V annotation resources:
+  [RITE](https://eye.medicine.uiowa.edu/rite-dataset) and
+  [Hemelings et al., 2019](https://rubenhx.github.io/av-segmentation/).
+  The bundled masks are taken from this project's existing `DRIVE_AV` and
+  `HRF_AV` collections; the resources are listed separately from the image sources.
+
+Dataset rights remain with their respective providers. These reduced examples
+do not change the original dataset terms, and the code does not relicense them.
+
 The optional `--full-size` check runs the default-width `[32, 64, 128, 256, 512]`
 model at 608×608; it needs more memory than the example training run.
 
@@ -101,7 +138,7 @@ the evaluated images; undefined ratios are recorded as JSON `null`.
 The runnable project includes corrections to spatial augmentation, boundary
 gradients, checkpoint/model matching and train/validation/test handling. Its
 results therefore should not be presented as a reproduction of historical
-experiment scores. Synthetic example scores verify execution only.
+experiment scores. Scores on this small demonstration subset verify execution only.
 
 ## Files
 
@@ -117,4 +154,4 @@ experiment scores. Synthetic example scores verify execution only.
 | `check_model.py` | Model, loss, preprocessing and split checks |
 | `config.json` | Small CPU example |
 | `config.research.json` | Larger model with editable retinal-data paths |
-| `generate_sample_data.py` | Deterministic synthetic image/mask generator |
+| `generate_sample_data.py` | Optional synthetic image/mask generator in a separate directory |

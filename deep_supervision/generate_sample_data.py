@@ -7,7 +7,7 @@ import numpy as np
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--output', type=Path, default=Path(__file__).with_name('sample_data'))
+    parser.add_argument('--output', type=Path, default=Path(__file__).with_name('synthetic_data'))
     args = parser.parse_args(argv)
     for split_index, (split, count) in enumerate([('train', 6), ('val', 2), ('test', 2)]):
         image_dir = args.output / split / 'images'

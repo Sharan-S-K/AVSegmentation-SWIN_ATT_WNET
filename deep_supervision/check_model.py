@@ -174,7 +174,7 @@ class ModelChecks(unittest.TestCase):
         np.testing.assert_array_equal(result[:, :, 0], original[:, :, 0])
 
     def test_13_dataset_splits_and_shapes(self):
-        from dataset import get_dataset_paths, get_dataloaders
+        from dataset import get_dataset_paths, get_dataloaders, load_config
         config_path = Path(__file__).with_name('config.json')
         train, _, val, _ = get_dataset_paths(config_path)
         _, _, test, _ = get_dataset_paths(config_path, split='test')
@@ -183,9 +183,11 @@ class ModelChecks(unittest.TestCase):
         self.assertTrue(set(val).isdisjoint(test))
         loader, _ = get_dataloaders(config_path)
         image, vessel, label = next(iter(loader))
-        self.assertEqual(tuple(image.shape), (2, 4, 64, 64))
-        self.assertEqual(tuple(vessel.shape), (2, 2, 64, 64))
-        self.assertEqual(tuple(label.shape), (2, 3, 64, 64))
+        settings = load_config(config_path)
+        size = settings['hardware_profiles'][settings['hardware_profile']]['image_size']
+        self.assertEqual(tuple(image.shape), (2, 4, size, size))
+        self.assertEqual(tuple(vessel.shape), (2, 2, size, size))
+        self.assertEqual(tuple(label.shape), (2, 3, size, size))
 
     def test_14_unknown_vessel_colors_are_not_artery_vein_background_targets(self):
         import cv2
@@ -200,6 +202,7 @@ class ModelChecks(unittest.TestCase):
             cv2.imwrite(str(directory / 'image.png'), image)
             cv2.imwrite(str(directory / 'mask.png'), label)
             config = load_config(Path(__file__).with_name('config.json'))
+            config['hardware_profiles'][config['hardware_profile']]['image_size'] = 64
             dataset = AVSegDataset([str(directory / 'image.png')], [str(directory / 'mask.png')], config, is_train=False)
             _, vessels, classes = dataset[0]
             self.assertEqual(vessels[1, 10, 10].item(), 1.)

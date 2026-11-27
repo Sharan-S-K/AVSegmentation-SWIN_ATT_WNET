@@ -7,7 +7,7 @@ Attention-WNet and Swin-WNet research implementations for retinal images.
 [`deep_supervision/`](deep_supervision/README.md) contains the complete two-stage
 Attention-WNet project: image/mask loading, preprocessing and augmentation,
 six auxiliary decoder heads, losses, training, checkpointing and evaluation.
-Ten small synthetic image/mask pairs are included for an immediate CPU run.
+Ten real DRIVE/HRF image–mask pairs are included for an immediate CPU run.
 
 Use Python 3.10 and run from that directory:
 
@@ -20,8 +20,8 @@ python check_model.py --full-size
 ```
 
 The default configuration runs two epochs with a small model. Outputs include
-checkpoints, learning curves, test metrics and predicted masks. The synthetic
-data demonstrates execution; it is not a medical benchmark. See the project
+checkpoints, learning curves, test metrics and predicted masks. The ten-image subset
+demonstrates execution; it is not a medical benchmark. See the project
 README and `config.research.json` for larger model settings and real-data setup.
 
 ## Architecture
@@ -50,7 +50,7 @@ by the `deep_supervision` scripts.
   is the original TensorFlow/Keras research notebook. It is preserved separately
   and is not required for the runnable PyTorch example.
 - [`Dataset/`](Dataset/) retains the existing retinal image and mask files.
-  The CPU example uses only its own synthetic data.
+  The CPU example uses selected, resized DRIVE and HRF pairs from these collections.
 
 The runnable project has 14 local checks covering model outputs, auxiliary-head
 gradients, cascade gradients, the weighted objective, boundary gradients, spatial
